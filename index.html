@@ -249,18 +249,14 @@
         // --- Wheel Data & Configuration ---
         // Data for the prize wheel segments
         const prizes = [
-            { text: "Wear a silly hat\nto the draft", color1: "#FACC15", color2: "#FCD34D" },
-            { text: "Cook for the\nleague winner", color1: "#EF4444", color2: "#F87171" },
-            { text: "Sing a team's\nfight song", color1: "#22C55E", color2: "#4ADE80" },
-            { text: "Be the league\ncommissioner next year", color1: "#3B82F6", color2: "#60A5FA" },
-            { text: "Change your profile\npic to a funny photo", color1: "#EC4899", color2: "#F9A8D4" },
-            { text: "Buy the league\nwinner a beer", color1: "#8B5CF6", color2: "#A78BFA" },
-            { text: "Clean the league\nwinner's car", color1: "#14B8A6", color2: "#5EEAD4" },
-            { text: "Record a video of\nyou doing a victory dance", color1: "#F97316", color2: "#FB923C" },
-            { text: "Get a tattoo of the\nleague logo (joke!)", color1: "#6366F1", color2: "#818CF8" },
-            { text: "Do 50 pushups", color1: "#A855F7", color2: "#C084FC" },
+            { text: "chug a cup of\nlemon juice", color1: "#FACC15", color2: "#FCD34D" },
+            { text: "eat 3 hot dogs\nconsecutively", color1: "#EF4444", color2: "#F87171" },
+            { text: "winner chooses\nnew team\nname for loser", color1: "#22C55E", color2: "#4ADE80" },
+            { text: "shotgun a beer", color1: "#3B82F6", color2: "#60A5FA" },
+            { text: "public humiliation\nwinner choice", color1: "#EC4899", color2: "#F9A8D4" },
+            { text: "drink a\ntablespoon of\nhot sauce", color1: "#8B5CF6", color2: "#A78BFA" },
+            { text: "sing a song\nof the winner’s\nchoice", color1: "#14B8A6", color2: "#5EEAD4" },
             { text: "Another Spin", color1: "#EAB308", color2: "#FCD34D" },
-            { text: "Take a selfie with a\nrival team's jersey on", color1: "#06B6D4", color2: "#22D3EE" }
         ];
 
         // --- Global Variables and State ---
@@ -317,12 +313,13 @@
                 ctx.fill();
 
                 // Draw the prize text
-                ctx.save();
-                ctx.fillStyle = "black";
-                ctx.font = 'bold 12px "Comic Sans MS"';
-                ctx.textAlign = "left";
-                ctx.translate(centerX, centerY);
-                ctx.rotate(angle + arc / 2);
+              ctx.save();
+        ctx.fillStyle = "black";
+        // --- UPDATED CODE: FONT SIZE ---
+        ctx.font = 'bold 18px "Inter"'; // Increased font size and changed the font
+        ctx.textAlign = "left";
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle + arc / 2);
 
                 const lines = prizes[i].text.split('\n');
                 const lineHeight = 15;
@@ -389,20 +386,24 @@
             requestAnimationFrame(animate);
         }
 
-        // Function to determine the winner based on the final angle
-        function determineWinner() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const pointerAngle = (2 * Math.PI - startAngle + Math.PI / 2) % (2 * Math.PI);
-            
-            const normalizedAngle = (pointerAngle + 2 * Math.PI) % (2 * Math.PI);
+      // Function to determine the winner based on the final angle
+function determineWinner() {
+    // Correct calculation for the angle the pointer lands on
+    // The pointer is at the top (3π/2 or 270 degrees) relative to the wheel's starting point (0 degrees on the right).
+    // We adjust the final startAngle to align with this pointer position.
+    const normalizedStartAngle = (startAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    const pointerAngle = (2 * Math.PI - normalizedStartAngle + 3 * Math.PI / 2) % (2 * Math.PI);
 
-            const degrees = normalizedAngle * (180 / Math.PI);
-            const prizeIndex = Math.floor(degrees / (360 / prizes.length));
-            const winningPrize = prizes[prizes.length - 1 - prizeIndex].text;
-            
-            showMessage(winningPrize);
-        }
+    // Calculate the index based on the pointer's angle and the segment arc size
+    const segmentAngle = 2 * Math.PI / prizes.length;
+    const prizeIndex = Math.floor(pointerAngle / segmentAngle);
+
+    // Get the winning prize from the prizes array using the calculated index
+    const winningPrize = prizes[prizeIndex].text;
+    
+    // Display the winning message
+    showMessage(winningPrize);
+}
         
         // Custom message box function to display the result
         function showMessage(text) {
